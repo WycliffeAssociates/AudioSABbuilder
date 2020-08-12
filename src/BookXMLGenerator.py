@@ -138,13 +138,15 @@ class BookXMLGenerator:
         f.write(xml_dom.toxml())
         f.close()
 
+        return output_app_def_location
 
-system_files = [
-    # open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c01.mp3"),
-    open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c02.mp3"),
-    # open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c03.mp3")
-]
 
-xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', system_files)
+# system_files = [
+#     open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c01.mp3"),
+#     open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c02.mp3"),
+#     open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c03.mp3")
+# ]
+
+# xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', system_files)
 # print(xml_gen.get_book_tag().toprettyxml())
-xml_gen.write_to_app_def_file()
+# xml_gen.write_to_app_def_file()
