@@ -10,6 +10,16 @@ def get_chapter_number(file):
     return str(int(json.loads(file_info.artist)['chapter']))
 
 
+def get_chapter_count(book_slug):
+    with open("/home/dj/PycharmProjects/AudioSABbuilder/resources/books_chapter_count.json", 'r') as json_file:
+        data = json.load(json_file)
+
+        for obj in data:
+            if obj['slug'] == book_slug.lower():
+                return obj['chapterNum']
+        return -1
+
+
 class BookXMLGenerator:
     def __init__(self, book_name, book_slug, book_type, anthology, sub_group, files=None):
         if files is None:
@@ -26,6 +36,13 @@ class BookXMLGenerator:
     def get_text_node(self, text=''):
         return self.root.createTextNode(text)
 
+    def get_chapter_file_by_num(self, chapter_num):
+        for file in self.files:
+            if int(get_chapter_number(file)) == chapter_num:
+                return file
+        return None
+
+
     def get_book_tag(self):
         book_el = self.root.createElement('book')
         book_el.setAttribute('id', self.book_slug)
@@ -33,8 +50,14 @@ class BookXMLGenerator:
 
         for tag in self.get_book_header():
             book_el.appendChild(tag)
-        for file in self.files:
-            book_el.appendChild(self.get_page_tag(file, 'a1'))
+        for chapter_number in range(get_chapter_count(self.book_slug)):
+            book_el.appendChild(
+                self.get_page_tag(
+                    self.get_chapter_file_by_num(chapter_number + 1),
+                    chapter_number + 1,
+                    'a1'
+                )
+            )
         book_el.appendChild(self.get_features_tag())
 
         return book_el
@@ -72,12 +95,16 @@ class BookXMLGenerator:
 
         return audio_chapters_el
 
-    def get_page_tag(self, file, src=''):
+    def get_page_tag(self, file, chapter_number, src=''):
         page_el = self.root.createElement('page')
+        page_el.setAttribute('num', str(chapter_number))
+
+        if file is None:
+            page_el.appendChild(self.get_text_node())
+            return page_el
+
         audio_el = self.root.createElement('audio')
         filename_el = self.root.createElement('filename')
-
-        page_el.setAttribute('num', get_chapter_number(file))
 
         filename_el.setAttribute('src', src)
         filename_el.setAttribute('len', str(round(1000 * MP3(file.name).info.length)))
