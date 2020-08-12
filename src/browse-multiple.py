@@ -5,6 +5,8 @@ import os
 import json
 from tinytag import TinyTag, TinyTagException
 
+from src.BookXMLGenerator import BookXMLGenerator
+
 
 class AudioFile:
     def __init__(self, filename, anthology, language, version, book, bookNumber, mode, chapter, startv, endv, markers):
@@ -26,54 +28,43 @@ class BrowseFile(Tk):
         self.minsize(600, 400)
         self.maxsize(1000, 600)
 
-        self.listAudioFiles = []    # stores uploaded files with metadata
+        self.list_audio_files = []    # stores uploaded files with metadata
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
         self.labelFrame.grid(column=0, row=1, padx=30, pady=20)
 
         self.button()
-        self.submitbutton()
+        self.submit_button()
 
     def button(self):
-        self.button = ttk.Button(self.labelFrame, text="Browse Files", command=self.filedialog)
+        self.button = ttk.Button(self.labelFrame, text="Browse Files", command=self.file_dialog)
         self.button.grid(column=1, row=1)
 
-    def filedialog(self):
-        fileNames = filedialog.askopenfilenames(initialdir="E:/Downloads/", title="Select Files", filetypes=
-        (("Audio files", "*.mp3"), ("all files", "*.*")))
+    def file_dialog(self):
+        self.list_audio_files = []
+        file_names = filedialog.askopenfilenames(
+            initialdir="/home/dj/Documents/BibleAudioFiles/tit",
+            title="Select Files",
+            filetypes= (("Audio files", "*.mp3"), ("all files", "*.*"))
+        )
 
-        for file in fileNames:
+        for file_name in file_names:
             try:
-                fileinfo = TinyTag.get(file)
-                json_data = json.loads(fileinfo.artist)
-                audiofile = AudioFile(
-                    file,
-                    json_data["anthology"],
-                    json_data["language"],
-                    json_data["version"],
-                    json_data["book"],
-                    json_data["book_number"],
-                    json_data["mode"],
-                    json_data["chapter"],
-                    json_data["startv"],
-                    json_data["endv"],
-                    json_data["markers"]
-                )
-                self.listAudioFiles.append(audiofile)
+                self.list_audio_files.append(open(file_name))
             except TinyTagException:
-                print("Error reading file at " + file)
+                print("Error reading file at " + file_name)
 
         self.label = ttk.Label(self.labelFrame, text="")
-        self.label.configure(text="\n".join(fileNames))
+        self.label.configure(text="\n".join(file_names))
         self.label.grid(column=1, row=2)
 
-    def submitbutton(self):
-        self.submitbutton = ttk.Button(self.labelFrame, text="Submit", command=self.submit)
-        self.submitbutton.grid(column=1, row=3, pady=20)
+    def submit_button(self):
+        self.submit_button = ttk.Button(self.labelFrame, text="Submit", command=self.submit)
+        self.submit_button.grid(column=1, row=3, pady=20)
 
     def submit(self):
-        # trigger back-end process here
-        return self.listAudioFiles
+        book_xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', self.list_audio_files)
+        return book_xml_gen.write_to_app_def_file() # returns the location of the output file
 
 root = BrowseFile()
 root.mainloop()
