@@ -1,7 +1,5 @@
 <book id="TIT" type="audio-only">
-      <name>Titus</name>
       <group>NT</group>
-      <sub-group>PaulineEpistle</sub-group>
       <audio-chapters value="1-3"/>
       <audio-image-filename>null</audio-image-filename>
       <filename></filename>
