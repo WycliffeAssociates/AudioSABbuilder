@@ -1,0 +1,28 @@
+<book id="TIT" type="audio-only">
+      <name>Titus</name>
+      <group>NT</group>
+      <sub-group>PaulineEpistle</sub-group>
+      <audio-chapters value="1-3"/>
+      <audio-image-filename>null</audio-image-filename>
+      <filename></filename>
+      <page num="1">
+        <audio>
+          <filename src="a1" len="172800" size="2767265">/home/dan/Downloads/Files/en_nt_ulb_tit_c01.mp3</filename>
+        </audio>
+      </page>
+      <page num="2">
+        <audio>
+          <filename src="a1" len="126642" size="2028731">/home/dan/Downloads/Files/en_nt_ulb_tit_c02.mp3</filename>
+        </audio>
+      </page>
+      <page num="3">
+        <audio>
+          <filename src="a1" len="136856" size="2192153">/home/dan/Downloads/Files/en_nt_ulb_tit_c03.mp3</filename>
+        </audio>
+      </page>
+      <features type="book">
+        <feature name="show-chapter-numbers" value="inherit"/>
+        <feature name="audio-goto-next-chapter" value="inherit"/>
+        <feature name="lock-orientation" value="none"/>
+      </features>
+    </book>
