@@ -1,5 +1,6 @@
 from xml.dom.minidom import Document
 from tinytag import TinyTag
+from mutagen.mp3 import MP3
 import json
 import os
 
@@ -79,7 +80,7 @@ class BookXMLGenerator:
         page_el.setAttribute('num', get_chapter_number(file))
 
         filename_el.setAttribute('src', src)
-        filename_el.setAttribute('len', str(os.path.getsize(file.name))) # TODO update this to be accurate
+        filename_el.setAttribute('len', str(round(1000 * MP3(file.name).info.length)))
         filename_el.setAttribute('size', str(os.path.getsize(file.name)))
         filename_el.appendChild(self.get_text_node(file.name))
 
@@ -115,4 +116,4 @@ system_files = [
 ]
 
 xml_gen = BookXMLGenerator('Titus', 'TIT', 'audio-only', 'NT', 'PaulineEpistle', system_files)
-xml_gen.get_book_tag().toprettyxml()
+print(xml_gen.get_book_tag().toprettyxml())
