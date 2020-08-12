@@ -1,9 +1,11 @@
-from xml.dom.minidom import Document
+from xml.dom.minidom import Document, parse
 from tinytag import TinyTag
 from mutagen.mp3 import MP3
 import json
 import os
 
+generic_app_def_location = "/home/dj/PycharmProjects/AudioSABbuilder/resources/audiobible.appDef"
+output_app_def_location = "/home/dj/PycharmProjects/AudioSABbuilder/resources/audiobible_modified.appDef"
 
 def get_chapter_number(file):
     file_info = TinyTag.get(file.name)
@@ -21,15 +23,15 @@ def get_chapter_count(book_slug):
 
 
 class BookXMLGenerator:
-    def __init__(self, book_name, book_slug, book_type, anthology, sub_group, files=None):
+    def __init__(self, book_slug, book_type, anthology, files=None):
         if files is None:
             files = []
         self.root = Document()
-        self.book_name = book_name
-        self.book_slug = book_slug
+        # self.book_name = book_name
+        self.book_slug = book_slug.upper()
         self.book_type = book_type
         self.anthology = anthology
-        self.sub_group = sub_group
+        # self.sub_group = sub_group
         self.num_chapters = len(files)
         self.files = files
 
@@ -50,13 +52,9 @@ class BookXMLGenerator:
 
         for tag in self.get_book_header():
             book_el.appendChild(tag)
-        for chapter_number in range(get_chapter_count(self.book_slug)):
+        for file in self.files:
             book_el.appendChild(
-                self.get_page_tag(
-                    self.get_chapter_file_by_num(chapter_number + 1),
-                    chapter_number + 1,
-                    'a1'
-                )
+                self.get_audio_tag(file, 'a1')
             )
         book_el.appendChild(self.get_features_tag())
 
@@ -65,20 +63,20 @@ class BookXMLGenerator:
     def get_book_header(self):
         name_el = self.root.createElement('name')
         group_el = self.root.createElement('group')
-        sub_group_el = self.root.createElement('sub-group')
+        # sub_group_el = self.root.createElement('sub-group')
         audio_image_filename_el = self.root.createElement('audio-image-filename')
         filename_el = self.root.createElement('filename')
 
-        name_el.appendChild(self.get_text_node(self.book_name))
+        name_el.appendChild(self.get_text_node())
         group_el.appendChild(self.get_text_node(self.anthology))
-        sub_group_el.appendChild(self.get_text_node(self.sub_group))
+        # sub_group_el.appendChild(self.get_text_node(self.sub_group))
         audio_image_filename_el.appendChild(self.get_text_node('null'))
         filename_el.appendChild(self.get_text_node())
 
         return [
             name_el,
             group_el,
-            sub_group_el,
+            # sub_group_el,
             self.get_audio_chapters_tag(),
             audio_image_filename_el,
             filename_el
@@ -95,15 +93,10 @@ class BookXMLGenerator:
 
         return audio_chapters_el
 
-    def get_page_tag(self, file, chapter_number, src=''):
-        page_el = self.root.createElement('page')
-        page_el.setAttribute('num', str(chapter_number))
-
-        if file is None:
-            page_el.appendChild(self.get_text_node())
-            return page_el
-
+    def get_audio_tag(self, file, src=''):
         audio_el = self.root.createElement('audio')
+        audio_el.setAttribute('chapter', get_chapter_number(file))
+
         filename_el = self.root.createElement('filename')
 
         filename_el.setAttribute('src', src)
@@ -112,9 +105,8 @@ class BookXMLGenerator:
         filename_el.appendChild(self.get_text_node(file.name))
 
         audio_el.appendChild(filename_el)
-        page_el.appendChild(audio_el)
 
-        return page_el
+        return audio_el
 
     def get_features_tag(self):
         features_el = self.root.createElement('features')
@@ -135,12 +127,24 @@ class BookXMLGenerator:
 
         return features_el
 
+    def write_to_app_def_file(self):
+        book_el = self.get_book_tag()
+        xml_dom = parse(generic_app_def_location)
+
+        books_el = xml_dom.getElementsByTagName('books')[0]
+        books_el.appendChild(book_el)
+
+        f = open(output_app_def_location, "w")
+        f.write(xml_dom.toxml())
+        f.close()
+
 
 system_files = [
-    open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c01.mp3"),
+    # open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c01.mp3"),
     open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c02.mp3"),
-    open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c03.mp3")
+    # open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c03.mp3")
 ]
 
-xml_gen = BookXMLGenerator('Titus', 'TIT', 'audio-only', 'NT', 'PaulineEpistle', system_files)
-print(xml_gen.get_book_tag().toprettyxml())
+xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', system_files)
+# print(xml_gen.get_book_tag().toprettyxml())
+xml_gen.write_to_app_def_file()
