@@ -5,8 +5,8 @@ from tkinter import filedialog
 from tinytag import TinyTagException
 import os
 
-from src.BookXMLGenerator import BookXMLGenerator
-from src.directorywatcher import Watcher
+from BookXMLGenerator import BookXMLGenerator
+from directorywatcher import Watcher
 
 class BrowseFile(Tk):
     def __init__(self):
@@ -15,7 +15,7 @@ class BrowseFile(Tk):
         self.minsize(600, 400)
         self.maxsize(1000, 600)
 
-        self.outputdir = "/apk" # default APK output
+        self.outputdir = "~/" # default APK output
         self.list_audio_files = [] # stores uploaded files with metadata
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
@@ -32,7 +32,7 @@ class BrowseFile(Tk):
     def file_dialog(self):
         self.list_audio_files = []
         file_names = filedialog.askopenfilenames(
-            initialdir="~/Documents/BibleAudioFiles/tit",
+            initialdir="~/",
             title="Select Files",
             filetypes= (("Audio files", "*.mp3"), ("all files", "*.*"))
         )
@@ -54,7 +54,7 @@ class BrowseFile(Tk):
         self.label2.grid(column=3, row=2, padx=10)
 
     def outputdiaglog(self):
-        outputdir = filedialog.askdirectory(initialdir="\\", title="Select Folder")
+        outputdir = filedialog.askdirectory(initialdir=self.outputdir, title="Select Folder")
         if outputdir != "":
             self.outputdir = outputdir
             self.label2.config(text=self.outputdir)
@@ -82,13 +82,14 @@ class BrowseFile(Tk):
         print(audio_files_host_dir)
         print(self.outputdir)
 
-        # print(os.system("ls -l"))
+        print("docker run -it --rm -v {}:/audio -v {}:'/root/App Builder/Scripture Apps/Apk Output' -v {}:'/root/App Builder/Scripture Apps/App Projects/AudioBible/AudioBible.appDef' sabaudio".format(audio_files_host_dir, self.outputdir, out_app_def_file_path))
+        os.system("docker run -it --rm -v {}:/audio -v {}:'/root/App Builder/Scripture Apps/Apk Output' -v {}:'/root/App Builder/Scripture Apps/App Projects/AudioBible/AudioBible.appDef' sabaudio".format(audio_files_host_dir, self.outputdir, out_app_def_file_path))
 
     def process(self):
         watcher = Watcher(self.outputdir)
         watcher.run()
         print("Build completed!")
-        self.label3.config(text="Build completed!")
+        self.label3.config(text="Build completed! File at {}".format(self.outputdir))
         self.submitbutton.config(state=NORMAL)
         self.browsebutton.config(state=NORMAL)
         self.outputbutton.config(state=NORMAL)

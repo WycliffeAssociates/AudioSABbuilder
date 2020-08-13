@@ -4,23 +4,12 @@ from mutagen.mp3 import MP3
 import json
 import os
 
-generic_app_def_location = "/home/dj/PycharmProjects/AudioSABbuilder/resources/audiobible.appDef"
-output_app_def_location = "/home/dj/PycharmProjects/AudioSABbuilder/resources/audiobible_modified.appDef"
+generic_app_def_location = "/home/dan/repos/AudioSABbuilder/resources/AudioBible.appDef"
+output_app_def_location = "/home/dan/repos/AudioSABbuilder/resources/audiobible_modified.appDef"
 
 def get_chapter_number(file):
     file_info = TinyTag.get(file.name)
     return str(int(json.loads(file_info.artist)['chapter']))
-
-
-def get_chapter_count(book_slug):
-    with open("/home/dj/PycharmProjects/AudioSABbuilder/resources/books_chapter_count.json", 'r') as json_file:
-        data = json.load(json_file)
-
-        for obj in data:
-            if obj['slug'] == book_slug.lower():
-                return obj['chapterNum']
-        return -1
-
 
 class BookXMLGenerator:
     def __init__(self, book_slug, book_type, anthology, files=None):
