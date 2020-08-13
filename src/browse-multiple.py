@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 from tinytag import TinyTagException
+import os
 
 from src.BookXMLGenerator import BookXMLGenerator
 from src.directorywatcher import Watcher
@@ -31,7 +32,7 @@ class BrowseFile(Tk):
     def file_dialog(self):
         self.list_audio_files = []
         file_names = filedialog.askopenfilenames(
-            initialdir="~/",
+            initialdir="~/Documents/BibleAudioFiles/tit",
             title="Select Files",
             filetypes= (("Audio files", "*.mp3"), ("all files", "*.*"))
         )
@@ -72,7 +73,16 @@ class BrowseFile(Tk):
         self.submitbutton.config(state=DISABLED)
 
         book_xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', self.list_audio_files)
-        return book_xml_gen.write_to_app_def_file() # returns the location of the output file
+        out_app_def_file_path = book_xml_gen.write_to_app_def_file()
+
+        # get directory to bind mount for audio files
+        audio_files_host_dir = os.path.dirname(self.list_audio_files[0].name)
+
+        print(out_app_def_file_path)
+        print(audio_files_host_dir)
+        print(self.outputdir)
+
+        # print(os.system("ls -l"))
 
     def process(self):
         watcher = Watcher(self.outputdir)
