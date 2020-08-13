@@ -40,9 +40,3 @@ class Handler(PatternMatchingEventHandler):
             # Taken any action here when a file is modified.
             print("File modified: %s.", event.src_path)
             Handler.isUpdated = True
-
-
-
-if __name__ == '__main__':
-    w = Watcher("E:\SAB\Output")
-    w.run()

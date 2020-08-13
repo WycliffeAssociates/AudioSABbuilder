@@ -28,7 +28,7 @@ class BrowseFile(Tk):
         self.minsize(600, 400)
         self.maxsize(1000, 600)
 
-        self.outputdir = "E:\SAB\Output" # default APK output
+        self.outputdir = "\\apk" # default APK output
         self.listAudioFiles = []    # stores uploaded files with metadata
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
@@ -43,7 +43,7 @@ class BrowseFile(Tk):
         self.browsebutton.grid(column=1, row=1)
 
     def filedialog(self):
-        fileNames = filedialog.askopenfilenames(initialdir="E:/Downloads/", title="Select Files", filetypes=
+        fileNames = filedialog.askopenfilenames(initialdir="\\", title="Select Files", filetypes=
         (("Audio files", "*.mp3"), ("all files", "*.*")))
 
         for file in fileNames:
@@ -78,7 +78,7 @@ class BrowseFile(Tk):
         self.label2.grid(column=3, row=2, padx=10)
 
     def outputdiaglog(self):
-        outputdir = filedialog.askdirectory(initialdir="E:\SAB\Output", title="Select Folder")
+        outputdir = filedialog.askdirectory(initialdir="\\", title="Select Folder")
         if outputdir != "":
             self.outputdir = outputdir
             self.label2.config(text=self.outputdir)

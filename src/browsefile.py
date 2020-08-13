@@ -26,7 +26,7 @@ class BrowseFile(Tk):
         self.minsize(600, 400)
         self.maxsize(1000, 600)
 
-        self.outputdir = "E:\SAB\Output"
+        self.outputdir = "\\apk" # default
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
         self.labelFrame.grid(column=0, row=1, padx=30, pady=20)
@@ -40,7 +40,7 @@ class BrowseFile(Tk):
         self.browsebutton.grid(column=1, row=1)
 
     def filedialog(self):
-        self.filename = filedialog.askopenfilename(initialdir="E:/Downloads/", title="Select A File", filetypes=
+        self.filename = filedialog.askopenfilename(initialdir="\\", title="Select A File", filetypes=
         (("Audio files", "*.mp3"), ("all files", "*.*")))
         if self.filename == "":
             return
@@ -69,11 +69,11 @@ class BrowseFile(Tk):
     def outputbutton(self):
         self.outputbutton = ttk.Button(self.labelFrame, text="Select Output Folder", command=self.outputdiaglog)
         self.outputbutton.grid(column=3, row=1, padx=10)
-        self.label2 = ttk.Label(self.labelFrame, anchor=E, justify=RIGHT, text="")
+        self.label2 = ttk.Label(self.labelFrame, anchor=E, justify=RIGHT, text="(Default: " + self.outputdir + ")")
         self.label2.grid(column=3, row=2, padx=10)
 
     def outputdiaglog(self):
-        self.outputdir = filedialog.askdirectory(initialdir="E:\SAB\Output", title="Select Folder")
+        self.outputdir = filedialog.askdirectory(initialdir="\\", title="Select Folder")
         self.label2.config(text=self.outputdir)
         print(self.outputdir)
 
