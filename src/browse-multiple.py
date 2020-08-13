@@ -6,7 +6,7 @@ import json
 from tinytag import TinyTag, TinyTagException
 
 from src.BookXMLGenerator import BookXMLGenerator
-from AudioSABbuilder.src.directorywatcher import Watcher
+from src.directorywatcher import Watcher
 
 
 class AudioFile:
@@ -29,7 +29,7 @@ class BrowseFile(Tk):
         self.minsize(600, 400)
         self.maxsize(1000, 600)
 
-        self.outputdir = "\\apk" # default APK output
+        self.outputdir = "/apk" # default APK output
         self.list_audio_files = []    # stores uploaded files with metadata
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
@@ -40,7 +40,7 @@ class BrowseFile(Tk):
         self.outputbutton()
 
     def browsebutton(self):
-        self.browsebutton = ttk.Button(self.labelFrame, text="Browse Files", command=self.filedialog)
+        self.browsebutton = ttk.Button(self.labelFrame, text="Browse Files", command=self.file_dialog)
         self.browsebutton.grid(column=1, row=1)
 
     def file_dialog(self):
@@ -48,8 +48,8 @@ class BrowseFile(Tk):
         file_names = filedialog.askopenfilenames(
             initialdir="/home/dj/Documents/BibleAudioFiles/tit",
             title="Select Files",
-        )
             filetypes= (("Audio files", "*.mp3"), ("all files", "*.*"))
+        )
 
         for file_name in file_names:
             try:
@@ -58,7 +58,7 @@ class BrowseFile(Tk):
                 print("Error reading file at " + file_name)
 
         self.label1 = ttk.Label(self.labelFrame, text="")
-        self.label1.configure(text="\n".join(fileNames))
+        self.label1.configure(text="\n".join(file_names))
         self.label1.grid(column=1, row=2)
 
     def outputbutton(self):
@@ -86,7 +86,7 @@ class BrowseFile(Tk):
         self.browsebutton.config(state=DISABLED)
         self.outputbutton.config(state=DISABLED)
         self.submitbutton.config(state=DISABLED)
-        # TODO: run back-end process here
+
         book_xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', self.list_audio_files)
         return book_xml_gen.write_to_app_def_file() # returns the location of the output file
 
@@ -98,5 +98,6 @@ class BrowseFile(Tk):
         self.submitbutton.config(state=NORMAL)
         self.browsebutton.config(state=NORMAL)
         self.outputbutton.config(state=NORMAL)
+
 root = BrowseFile()
 root.mainloop()
