@@ -18,12 +18,13 @@ class Watcher():
         except:
             self.observer.stop()
             print("Error")
-
+        self.filename = Handler.filename
         self.observer.stop()
 
 class Handler(PatternMatchingEventHandler):
     patterns = ["*.apk"]
     isUpdated = False
+    filename = ""
 
     @staticmethod
     def on_any_event(event):
@@ -32,11 +33,13 @@ class Handler(PatternMatchingEventHandler):
 
         elif event.event_type == 'created':
             # Take any action here when a file is first created.
-            print("File created: %s.", event.src_path)
+            print("File created: {}".format(event.src_path))
+            Handler.filename = event.src_path.replace('\\', '/')
             Handler.isUpdated = True
 
 
         elif event.event_type == 'modified':
             # Taken any action here when a file is modified.
-            print("File modified: %s.", event.src_path)
+            print("File modified: {}".format(event.src_path))
+            Handler.filename = event.src_path.replace('\\', '/')
             Handler.isUpdated = True

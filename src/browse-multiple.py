@@ -76,12 +76,13 @@ class BrowseFile(Tk):
     def submitbutton(self):
         self.submitbutton = ttk.Button(self.labelFrame, text="Submit", command=self.submit)
         self.submitbutton.grid(column=1, row=4, pady=20)
+        self.label3 = ttk.Label(self.labelFrame, anchor=E, justify=LEFT, text="")
+        self.label3.grid(column=1, row=5, rowspan=3, padx=10, pady=20)
+        self.label3.config(text="Build started...")
 
 
     def submit(self):
         print("Build started...")
-        self.label3 = ttk.Label(self.labelFrame, anchor=E, justify=RIGHT, text="Build started...")
-        self.label3.grid(column=1, row=5, rowspan=3, padx=10, pady=20)
         threading.Thread(target=self.process).start()
         self.browsebutton.config(state=DISABLED)
         self.outputbutton.config(state=DISABLED)
@@ -94,7 +95,7 @@ class BrowseFile(Tk):
         watcher = Watcher(self.outputdir)
         watcher.run()
         print("Build completed!")
-        self.label3.config(text="Build completed!")
+        self.label3.config(text="Build completed!\nOutput file at: " + watcher.filename)
         self.submitbutton.config(state=NORMAL)
         self.browsebutton.config(state=NORMAL)
         self.outputbutton.config(state=NORMAL)
