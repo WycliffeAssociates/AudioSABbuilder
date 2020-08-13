@@ -2,25 +2,10 @@ import threading
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-import json
-from tinytag import TinyTag, TinyTagException
+from tinytag import TinyTagException
 
 from src.BookXMLGenerator import BookXMLGenerator
 from src.directorywatcher import Watcher
-
-
-class AudioFile:
-    def __init__(self, filename, anthology, language, version, book, bookNumber, mode, chapter, startv, endv, markers):
-        self.filename = filename
-        self.languageCode = language
-        self.resoureceId = version
-        self.bookSlug = book
-        self.mode = mode
-        self.chapter = chapter
-        self.startv = startv
-        self.endv = endv
-        self.markers = markers
-
 
 class BrowseFile(Tk):
     def __init__(self):
@@ -30,7 +15,7 @@ class BrowseFile(Tk):
         self.maxsize(1000, 600)
 
         self.outputdir = "/apk" # default APK output
-        self.list_audio_files = []    # stores uploaded files with metadata
+        self.list_audio_files = [] # stores uploaded files with metadata
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
         self.labelFrame.grid(column=0, row=1, padx=50, pady=20)
@@ -46,7 +31,7 @@ class BrowseFile(Tk):
     def file_dialog(self):
         self.list_audio_files = []
         file_names = filedialog.askopenfilenames(
-            initialdir="/home/dj/Documents/BibleAudioFiles/tit",
+            initialdir="~/",
             title="Select Files",
             filetypes= (("Audio files", "*.mp3"), ("all files", "*.*"))
         )
@@ -76,7 +61,6 @@ class BrowseFile(Tk):
     def submitbutton(self):
         self.submitbutton = ttk.Button(self.labelFrame, text="Submit", command=self.submit)
         self.submitbutton.grid(column=1, row=4, pady=20)
-
 
     def submit(self):
         print("Build started...")
