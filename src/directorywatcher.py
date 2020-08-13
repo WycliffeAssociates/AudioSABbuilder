@@ -32,11 +32,11 @@ class Handler(PatternMatchingEventHandler):
 
         elif event.event_type == 'created':
             # Take any action here when a file is first created.
-            print("File created: %s.", event.src_path)
+            print("File created: {}".format(event.src_path))
             Handler.isUpdated = True
 
 
         elif event.event_type == 'modified':
             # Taken any action here when a file is modified.
-            print("File modified: %s.", event.src_path)
+            print("File modified: {}".format(event.src_path))
             Handler.isUpdated = True
