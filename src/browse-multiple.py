@@ -2,11 +2,20 @@ import threading
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-from tinytag import TinyTagException
+from tinytag import TinyTag, TinyTagException
+import json
 import os
 
 from BookXMLGenerator import BookXMLGenerator
 from directorywatcher import Watcher
+
+def get_anthology(file):
+    file_info = TinyTag.get(file.name)
+    return str(json.loads(file_info.artist)['anthology'])
+
+def get_book_slug(file):
+    file_info = TinyTag.get(file.name)
+    return str(json.loads(file_info.artist)['book'])
 
 class BrowseFile(Tk):
     def __init__(self):
@@ -73,7 +82,12 @@ class BrowseFile(Tk):
         self.outputbutton.config(state=DISABLED)
         self.submitbutton.config(state=DISABLED)
 
-        book_xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', self.list_audio_files)
+        first_file = self.list_audio_files[0]
+
+        anthology = get_anthology(first_file)
+        book_slug = get_book_slug(first_file)
+
+        book_xml_gen = BookXMLGenerator(book_slug, 'audio-only', anthology, self.list_audio_files)
         out_app_def_file_path = book_xml_gen.write_to_app_def_file()
 
         # get directory to bind mount for audio files

@@ -19,7 +19,7 @@ class BookXMLGenerator:
         # self.book_name = book_name
         self.book_slug = book_slug.upper()
         self.book_type = book_type
-        self.anthology = anthology
+        self.anthology = anthology.upper()
         # self.sub_group = sub_group
         self.num_chapters = len(files)
         self.files = files
