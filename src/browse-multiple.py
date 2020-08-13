@@ -1,11 +1,12 @@
+import threading
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-import os
 import json
 from tinytag import TinyTag, TinyTagException
 
 from src.BookXMLGenerator import BookXMLGenerator
+from src.directorywatcher import Watcher
 
 
 class AudioFile:
@@ -28,17 +29,19 @@ class BrowseFile(Tk):
         self.minsize(600, 400)
         self.maxsize(1000, 600)
 
+        self.outputdir = "/apk" # default APK output
         self.list_audio_files = []    # stores uploaded files with metadata
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
-        self.labelFrame.grid(column=0, row=1, padx=30, pady=20)
+        self.labelFrame.grid(column=0, row=1, padx=50, pady=20)
 
-        self.button()
-        self.submit_button()
+        self.browsebutton()
+        self.submitbutton()
+        self.outputbutton()
 
-    def button(self):
-        self.button = ttk.Button(self.labelFrame, text="Browse Files", command=self.file_dialog)
-        self.button.grid(column=1, row=1)
+    def browsebutton(self):
+        self.browsebutton = ttk.Button(self.labelFrame, text="Browse Files", command=self.file_dialog)
+        self.browsebutton.grid(column=1, row=1)
 
     def file_dialog(self):
         self.list_audio_files = []
@@ -54,17 +57,47 @@ class BrowseFile(Tk):
             except TinyTagException:
                 print("Error reading file at " + file_name)
 
-        self.label = ttk.Label(self.labelFrame, text="")
-        self.label.configure(text="\n".join(file_names))
-        self.label.grid(column=1, row=2)
+        self.label1 = ttk.Label(self.labelFrame, text="")
+        self.label1.configure(text="\n".join(file_names))
+        self.label1.grid(column=1, row=2)
 
-    def submit_button(self):
-        self.submit_button = ttk.Button(self.labelFrame, text="Submit", command=self.submit)
-        self.submit_button.grid(column=1, row=3, pady=20)
+    def outputbutton(self):
+        self.outputbutton = ttk.Button(self.labelFrame, text="Select Output Folder", command=self.outputdiaglog)
+        self.outputbutton.grid(column=3, row=1, padx=10)
+        self.label2 = ttk.Label(self.labelFrame, anchor=E, text="(Default: " + self.outputdir + ")")
+        self.label2.grid(column=3, row=2, padx=10)
+
+    def outputdiaglog(self):
+        outputdir = filedialog.askdirectory(initialdir="\\", title="Select Folder")
+        if outputdir != "":
+            self.outputdir = outputdir
+            self.label2.config(text=self.outputdir)
+
+    def submitbutton(self):
+        self.submitbutton = ttk.Button(self.labelFrame, text="Submit", command=self.submit)
+        self.submitbutton.grid(column=1, row=4, pady=20)
+
 
     def submit(self):
+        print("Build started...")
+        self.label3 = ttk.Label(self.labelFrame, anchor=E, justify=RIGHT, text="Build started...")
+        self.label3.grid(column=1, row=5, rowspan=3, padx=10, pady=20)
+        threading.Thread(target=self.process).start()
+        self.browsebutton.config(state=DISABLED)
+        self.outputbutton.config(state=DISABLED)
+        self.submitbutton.config(state=DISABLED)
+
         book_xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', self.list_audio_files)
         return book_xml_gen.write_to_app_def_file() # returns the location of the output file
+
+    def process(self):
+        watcher = Watcher(self.outputdir)
+        watcher.run()
+        print("Build completed!")
+        self.label3.config(text="Build completed!")
+        self.submitbutton.config(state=NORMAL)
+        self.browsebutton.config(state=NORMAL)
+        self.outputbutton.config(state=NORMAL)
 
 root = BrowseFile()
 root.mainloop()

@@ -44,7 +44,6 @@ class BookXMLGenerator:
                 return file
         return None
 
-
     def get_book_tag(self):
         book_el = self.root.createElement('book')
         book_el.setAttribute('id', self.book_slug)
@@ -102,7 +101,9 @@ class BookXMLGenerator:
         filename_el.setAttribute('src', src)
         filename_el.setAttribute('len', str(round(1000 * MP3(file.name).info.length)))
         filename_el.setAttribute('size', str(os.path.getsize(file.name)))
-        filename_el.appendChild(self.get_text_node(file.name))
+        filename_el.appendChild(
+            self.get_text_node("/audio/{}".format(os.path.basename(file.name)))
+        )
 
         audio_el.appendChild(filename_el)
 
@@ -146,7 +147,7 @@ class BookXMLGenerator:
 #     open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c02.mp3"),
 #     open("/home/dj/Documents/BibleAudioFiles/tit/en_nt_ulb_tit_c03.mp3")
 # ]
-
+#
 # xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', system_files)
 # print(xml_gen.get_book_tag().toprettyxml())
 # xml_gen.write_to_app_def_file()
