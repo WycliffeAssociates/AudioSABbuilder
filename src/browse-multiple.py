@@ -64,9 +64,9 @@ class BrowseFile(Tk):
         self.submitbutton.grid(column=1, row=4, pady=20)
         self.label3 = ttk.Label(self.labelFrame, anchor=E, justify=LEFT, text="")
         self.label3.grid(column=1, row=5, rowspan=3, padx=10, pady=20)
-        self.label3.config(text="Build started...")
 
     def submit(self):
+        self.label3.config(text="Build started...")
         print("Build started...")
         threading.Thread(target=self.process).start()
         self.browsebutton.config(state=DISABLED)
