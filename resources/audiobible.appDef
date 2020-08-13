@@ -14,7 +14,7 @@
   <ipa-version build="1" name="1.0"/>
 
   <signing>
-    <keystore>/home/dan/App Builder/keystore/keystore1.keystore</keystore>
+    <keystore>/root/App Builder/keystore/keystore1.keystore</keystore>
     <keystore-password>4or6lIg329O1PZ2kc2B79A==</keystore-password>
     <alias>key1</alias>
     <alias-password>4or6lIg329O1PZ2kc2B79A==</alias-password>

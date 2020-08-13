@@ -2,25 +2,11 @@ import threading
 from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
-import json
-from tinytag import TinyTag, TinyTagException
+from tinytag import TinyTagException
+import os
 
 from src.BookXMLGenerator import BookXMLGenerator
 from src.directorywatcher import Watcher
-
-
-class AudioFile:
-    def __init__(self, filename, anthology, language, version, book, bookNumber, mode, chapter, startv, endv, markers):
-        self.filename = filename
-        self.languageCode = language
-        self.resoureceId = version
-        self.bookSlug = book
-        self.mode = mode
-        self.chapter = chapter
-        self.startv = startv
-        self.endv = endv
-        self.markers = markers
-
 
 class BrowseFile(Tk):
     def __init__(self):
@@ -30,7 +16,7 @@ class BrowseFile(Tk):
         self.maxsize(1000, 600)
 
         self.outputdir = "/apk" # default APK output
-        self.list_audio_files = []    # stores uploaded files with metadata
+        self.list_audio_files = [] # stores uploaded files with metadata
 
         self.labelFrame = ttk.LabelFrame(self, text="Open File")
         self.labelFrame.grid(column=0, row=1, padx=50, pady=20)
@@ -46,7 +32,7 @@ class BrowseFile(Tk):
     def file_dialog(self):
         self.list_audio_files = []
         file_names = filedialog.askopenfilenames(
-            initialdir="/home/dj/Documents/BibleAudioFiles/tit",
+            initialdir="~/Documents/BibleAudioFiles/tit",
             title="Select Files",
             filetypes= (("Audio files", "*.mp3"), ("all files", "*.*"))
         )
@@ -80,7 +66,6 @@ class BrowseFile(Tk):
         self.label3.grid(column=1, row=5, rowspan=3, padx=10, pady=20)
         self.label3.config(text="Build started...")
 
-
     def submit(self):
         print("Build started...")
         threading.Thread(target=self.process).start()
@@ -89,7 +74,16 @@ class BrowseFile(Tk):
         self.submitbutton.config(state=DISABLED)
 
         book_xml_gen = BookXMLGenerator('TIT', 'audio-only', 'NT', self.list_audio_files)
-        return book_xml_gen.write_to_app_def_file() # returns the location of the output file
+        out_app_def_file_path = book_xml_gen.write_to_app_def_file()
+
+        # get directory to bind mount for audio files
+        audio_files_host_dir = os.path.dirname(self.list_audio_files[0].name)
+
+        print(out_app_def_file_path)
+        print(audio_files_host_dir)
+        print(self.outputdir)
+
+        # print(os.system("ls -l"))
 
     def process(self):
         watcher = Watcher(self.outputdir)
